@@ -1,6 +1,7 @@
 const express = require('express');
-const UserProfile = require('../models/UserProfile');
+const UserProfile = require('../models/UserProfile'); // Add this line
 const router = express.Router();
+const auth = require('../middleware/Auth.js');
 
 // Create Profile (Public)
 router.post('/', async (req, res) => {
@@ -13,8 +14,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Get All Profiles (Public)
-router.get('/', async (req, res) => {
+// Get All Profiles (Protected - Admin Only)
+router.get('/', auth, async (req, res) => { // Add auth middleware
   try {
     const { employmentStatus, qualification, sort } = req.query;
     let query = {};
@@ -28,6 +29,8 @@ router.get('/', async (req, res) => {
     res.status(500).json({ msg: 'Server error' });
   }
 });
+
+module.exports = router;
 
 router.delete('/:id', async (req, res) => {
   try {
